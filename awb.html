@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWB Pending</title>
+<style>
+:root{
+  --bg:#f2f4f7; --panel:#ffffff; --panel2:#f7f8fc; --ink:#141a2e; --ink2:#4b5470; --ink3:#8a92a8; --line:#e4e8f1;
+  --accent:#2f5d8c; --accent2:#4a7aa8; --accent-soft:#e6eef6;
+  --hero1:#22385a; --hero2:#2f5583; --hero3:#4f7ca6;
+  --ok:#2e8b63; --ok-soft:#e1f1e8; --stk:#2f8f9d; --stk-soft:#dff2f4;
+  --part:#c98a1b; --part-soft:#faf0dc; --bad:#c9505c; --bad-soft:#f8e4e6; --na:#98a1b5; --na-soft:#eceff5;
+  --info:#4a7aa8; --info-soft:#e6eef6;
+  --shadow:0 1px 2px rgba(20,26,46,.04),0 8px 24px rgba(20,26,46,.06);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e111a; --panel:#161a26; --panel2:#1c2130; --ink:#eef1f8; --ink2:#b3bad0; --ink3:#7d859c; --line:#272d3f;
+  --accent:#7ea6cf; --accent2:#9dbbdb; --accent-soft:#1c2a3d; --hero1:#16243a; --hero2:#1f3550; --hero3:#2d4c70;
+  --ok:#5fbf93; --ok-soft:#183027; --stk:#5ec4d1; --stk-soft:#12303a; --part:#d9a44a; --part-soft:#33291a;
+  --bad:#e08590; --bad-soft:#36202a; --na:#7d859c; --na-soft:#232838; --info:#7ea6cf; --info-soft:#1c2a3d; --shadow:0 1px 2px rgba(0,0,0,.4);}}
+:root[data-theme="dark"]{
+  --bg:#0e111a; --panel:#161a26; --panel2:#1c2130; --ink:#eef1f8; --ink2:#b3bad0; --ink3:#7d859c; --line:#272d3f;
+  --accent:#7ea6cf; --accent2:#9dbbdb; --accent-soft:#1c2a3d; --hero1:#16243a; --hero2:#1f3550; --hero3:#2d4c70;
+  --ok:#5fbf93; --ok-soft:#183027; --stk:#5ec4d1; --stk-soft:#12303a; --part:#d9a44a; --part-soft:#33291a;
+  --bad:#e08590; --bad-soft:#36202a; --na:#7d859c; --na-soft:#232838; --info:#7ea6cf; --info-soft:#1c2a3d; --shadow:0 1px 2px rgba(0,0,0,.4);}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Segoe UI","Leelawadee UI","Noto Sans Thai",Tahoma,sans-serif;font-size:14px;line-height:1.45}
+.wrap{max-width:1440px;margin:0 auto;padding:20px 24px 60px}
+header.top{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between;margin:-20px -24px 18px;padding:26px 24px 22px;background:linear-gradient(120deg,var(--hero1),var(--hero2) 55%,var(--hero3));color:#fff;border-radius:0 0 22px 22px;box-shadow:0 8px 24px rgba(34,56,90,.16)}
+header.top .meta{color:rgba(255,255,255,.82)} header.top .meta b{color:#fff}
+header.top h1 small{color:rgba(255,255,255,.85)}
+header.top .btn{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.35);color:#fff}
+.wrap{padding-top:20px}
+h1{font-size:26px;margin:0;letter-spacing:-.3px;font-weight:800}
+h1 small{display:block;font-size:13px;color:var(--ink2);font-weight:400;margin-top:4px;letter-spacing:0}
+.meta{display:flex;flex-wrap:wrap;gap:6px 18px;color:var(--ink2);font-size:12.5px}
+.meta b{color:var(--ink);font-weight:600}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;cursor:pointer}
+.btn:hover{border-color:var(--ink3)}
+.btn.primary{background:linear-gradient(120deg,var(--hero1),var(--hero2));border-color:transparent;color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#1d1b19}
+.filters{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 90%,transparent);border-radius:12px;backdrop-filter:blur(6px);padding:10px 0;margin-bottom:14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+.filters label{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:6px}
+select,input[type=search]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 10px;min-width:120px}
+input[type=search]{min-width:220px}
+.chipsel{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:4px 10px;font-size:12.5px;font-weight:600}
+.chipsel button{border:0;background:none;color:inherit;cursor:pointer;font-size:14px;padding:0 2px}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)}
+.kpi{padding:14px 16px 14px 18px;position:relative;overflow:hidden}
+.kpi:before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--info)}
+.kpi.ok:before{background:var(--ok)} .kpi.part:before{background:var(--part)} .kpi.bad:before{background:var(--bad)}
+.kpi .lab{font-size:12px;color:var(--ink2)}
+.kpi .val{font-size:28px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums;letter-spacing:-.5px}
+.kpi .sub{font-size:12px;color:var(--ink3);margin-top:2px}
+.kpi.bad .val{color:var(--bad)} .kpi.part .val{color:var(--part)} .kpi.ok .val{color:var(--ok)}
+section{margin-top:22px}
+section > h2{font-size:16px;margin:0 0 10px;display:flex;align-items:baseline;gap:10px}
+section > h2:before{content:'';width:4px;height:16px;border-radius:2px;background:linear-gradient(var(--hero2),var(--hero3));align-self:center}
+section > h2 span{font-size:12px;font-weight:400;color:var(--ink3)}
+.recalls{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.rc{padding:14px 16px;cursor:pointer;transition:border-color .15s, transform .15s}
+.rc:hover{border-color:var(--ink3)}
+.rc.sel{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft),var(--shadow)}
+.rc:hover{transform:translateY(-2px)}
+.rc .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.rc .no{font-size:18px;font-weight:700}
+.rc .no small{font-size:12px;font-weight:400;color:var(--ink3);margin-left:6px}
+.rc .ttl{font-size:12px;color:var(--ink2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.rc .hd>div:first-child{min-width:0;flex:1}.rc .hd>div:last-child{flex:none;text-align:right}
+.pct{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.bar{display:flex;height:10px;border-radius:6px;overflow:hidden;background:var(--na-soft);margin:10px 0 8px}
+.bar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink2)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.rc .end{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px;padding:8px 10px;border-radius:10px;background:var(--accent-soft);font-size:13px;color:var(--ink)}
+.rc .end b{font-size:14px}
+.endc{white-space:nowrap}
+.endc small{display:block;font-size:11px;color:var(--ink3)}
+.rc .dl{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--ink2)}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.t-ok{background:var(--ok-soft);color:var(--ok)} .t-stk{background:var(--stk-soft);color:var(--stk)} .t-part{background:var(--part-soft);color:var(--part)}
+.t-bad{background:var(--bad-soft);color:var(--bad)} .t-na{background:var(--na-soft);color:var(--na)} .t-acc{background:var(--accent-soft);color:var(--accent)}
+.two{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)}
+@media (max-width:1000px){.two{grid-template-columns:minmax(0,1fr)}}
+.pad{padding:14px 16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:12px;font-weight:700;color:var(--ink2);padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;position:sticky;top:0;background:var(--panel2);z-index:1;text-transform:none}
+tbody tr:hover td{background:var(--panel2)}
+td{padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.mini{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--na-soft);min-width:120px}
+.mini i{display:block;height:100%}
+.scroll{overflow:auto;max-height:560px}
+.issues{display:flex;flex-wrap:wrap;gap:8px}
+.issue{border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:10px 12px;cursor:pointer;min-width:140px;flex:1 1 140px}
+.issue:hover{border-color:var(--ink3)} .issue.sel{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.issue{transition:transform .15s}.issue:hover{transform:translateY(-2px)}
+.issue .n{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+.issue .l{font-size:12px;color:var(--ink2)}
+.matrix td,.matrix th{padding:4px 6px;border-bottom:1px solid var(--line)}
+.matrix th.rcol{text-align:center;font-size:11.5px}
+.cell{width:22px;height:22px;border-radius:6px;margin:auto;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.c-ok{background:var(--ok-soft);color:var(--ok)} .c-part{background:var(--part)} .c-bad{background:var(--bad)} .c-na{background:var(--na-soft)}
+.c-part,.c-bad{color:#fff}
+.rl th{background:linear-gradient(180deg,var(--hero2),var(--hero1));color:#fff;border-bottom:0;text-align:center}
+.rl td{border-right:1px solid var(--line);white-space:nowrap} .rl td:last-child{border-right:0} .rl td:nth-child(3){white-space:normal;min-width:180px} .rl td:nth-child(6){white-space:normal;min-width:260px}
+.rl tr.grp td{background:var(--info-soft);font-weight:700;color:var(--ink);border-top:2px solid var(--line)}
+.rl tr.shp td{background:var(--panel2);font-weight:600}
+.rl td.c{text-align:center}
+.ms{position:relative}
+.ms>button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 28px 6px 10px;cursor:pointer;min-width:130px;max-width:230px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.ms>button:after{content:'▾';position:absolute;right:9px;top:50%;transform:translateY(-50%);color:var(--ink3)}
+.ms>button small{display:block;font-size:10.5px;color:var(--ink3);line-height:1.1}
+.ms.on>button{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.ms .pop{display:none;position:absolute;z-index:30;top:calc(100% + 6px);left:0;width:300px;max-width:86vw;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(20,26,46,.18);padding:8px}
+.ms.open .pop{display:block}
+.ms .pop input[type=search]{width:100%;min-width:0;margin-bottom:6px}
+.ms .acts{display:flex;justify-content:space-between;font-size:12px;margin:2px 4px 6px}
+.ms .acts a{color:var(--accent);cursor:pointer}
+.ms .list{max-height:280px;overflow:auto}
+.ms label.opt{display:flex;gap:8px;align-items:flex-start;padding:5px 6px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink)}
+.ms label.opt:hover{background:var(--panel2)}
+.ms label.opt input{margin:3px 0 0;width:auto;flex:none}
+.ms label.opt span{flex:1;text-align:left;word-break:break-word}
+.ms label.opt span small{color:var(--ink3)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tab{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;cursor:pointer;font:inherit;font-size:12.5px;color:var(--ink2)}
+.tab.on{background:linear-gradient(120deg,var(--hero1),var(--hero2));color:#fff;border-color:transparent}
+.muted{color:var(--ink3)} .small{font-size:12px}
+.shop{font-weight:600} .code{color:var(--ink3);font-size:12px;font-variant-numeric:tabular-nums}
+.more{display:block;margin:10px auto 0}
+.empty{padding:30px;text-align:center;color:var(--ink3)}
+.note{font-size:12px;color:var(--ink3);margin-top:28px;line-height:1.7}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);padding:6px 9px;border-radius:7px;font-size:12px;z-index:50;max-width:280px;display:none}
+@media (max-width:640px){.wrap{padding:14px 16px 40px} header.top{margin:-14px -16px 16px;padding:20px 16px 18px} input[type=search]{min-width:0;width:100%} .kpi .val{font-size:24px}}
+
+.navtabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.navtabs a{color:#fff;text-decoration:none;font-size:13px;font-weight:600;padding:6px 14px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28)}
+.navtabs a:hover{background:rgba(255,255,255,.22)}
+.navtabs a.on{background:#fff;color:var(--hero1);border-color:#fff}
+:root[data-theme="dark"] .navtabs a.on{color:#16243a}
+a{color:var(--accent)} #slaTbl a,#shopTbl a{text-decoration:none;color:inherit} #slaTbl a:hover,#shopTbl a:hover{color:var(--accent);text-decoration:underline}
+.ms>button{max-width:260px}
+@media (max-width:640px){.ms{flex:1 1 45%}.ms>button{width:100%;max-width:none}}
+@media (max-width:640px){.filters label{width:100%;justify-content:space-between}.filters select{flex:1;max-width:none;min-width:0;width:0}.filters{position:static}}
+.errrow{display:grid;grid-template-columns:minmax(0,1fr) 120px 50px;gap:10px;align-items:center;padding:6px 8px;border-radius:8px;cursor:pointer;font-size:12.5px}
+.errrow:hover{background:var(--panel2)} .errrow.sel{background:var(--accent-soft)}
+.errrow .et{overflow:hidden;text-overflow:ellipsis;white-space:nowrap} .errrow .eb{height:8px;border-radius:4px;background:var(--na-soft);overflow:hidden}
+.errrow .eb i{display:block;height:100%;background:var(--bad)} .errrow .ev{text-align:right;font-weight:700;font-variant-numeric:tabular-nums}
+@media (max-width:640px){.errrow{grid-template-columns:minmax(0,1fr) 60px 40px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <nav class="navtabs"><a href="./">Recall</a><a href="nonconform.html">Non Conform Pending</a><a href="awb.html" class="on">AWB Pending</a></nav>
+      <h1>AWB Pending<small>สรุปปัญหาหน้า AWB ที่ยัง Pending (Warehouse Return) · สินค้าไม่ครบ / ไม่มีสินค้าส่งมา · แยกจากข้อมูล Recall และ Non Conform</small></h1>
+    </div>
+    <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+      <div class="meta" id="meta"></div>
+      <button class="btn" id="theme" title="สลับโหมดสว่าง/มืด">◐</button>
+    </div>
+  </header>
+
+  <div class="filters">
+    <div class="ms" data-k="sla" data-l="SLA"></div>
+    <div class="ms" data-k="reg" data-l="Region"></div>
+    <div class="ms" data-k="area" data-l="Area"></div>
+    <div class="ms" data-k="type" data-l="TYPE SHOP"></div>
+    <div class="ms" data-k="shop" data-l="สาขา"></div>
+    <div class="ms" data-k="err" data-l="ปัญหา"></div>
+    <input type="search" id="q" placeholder="ค้นหา AWB / IMEI-Serial / เลขเอกสาร / Material">
+    <button class="btn" id="reset">ล้างตัวกรอง</button>
+  </div>
+
+  <div class="grid kpis" id="kpis"></div>
+
+  <section>
+    <h2>อายุปัญหา (SLA) แยกตาม Region <span>จำนวนชิ้น · คลิกช่องเพื่อกรอง</span></h2>
+    <div class="card pad scroll" style="max-height:none"><table id="slaTbl"></table></div>
+  </section>
+
+  <div class="grid two">
+    <section>
+      <h2>สาขาที่ติดปัญหามากที่สุด <span>คลิกชื่อสาขาเพื่อกรอง</span></h2>
+      <div class="card scroll"><table id="shopTbl"></table></div>
+    </section>
+    <section>
+      <h2>ประเภทปัญหา <span>คลิกเพื่อกรอง</span></h2>
+      <div class="card pad" id="errBox"></div>
+    </section>
+  </div>
+
+  <section>
+    <h2>รายละเอียดรายการ <span id="detCount"></span></h2>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="btn primary" id="export">⬇ ดาวน์โหลด CSV</button></div>
+    <div class="card scroll" style="max-height:640px"><table id="detTbl"></table></div>
+    <button class="btn more" id="more" style="display:none">แสดงเพิ่ม</button>
+  </section>
+
+  <p class="note" id="note"></p>
+</div>
+<div class="tip" id="tip"></div>
+
+<script id="embedded-data" type="application/json">{"file":"สรุปปัญหาหน้า AWB Pending 21-10-2026.xlsx","fileDate":"21/10/2026","built":"21/10/2026 18:27","shops":{"80100481":["True Shop The Mall Bangkapi","BMA IV - South East","Matching","BMA",true],"80100623":["True Shop Central Rama 9","BMA V - Central","Matching","BMA",true],"80100626":["True Shop Central Pinklao 3Fl.","BMA II - South West","Matching","BMA",true],"80100725":["True Shop Lotus's Bang Pa-In Ayudhaya","UPC - Central","Non Matching","UPC II",true],"80101182":["True Shop Central Chaengwattana","BMA I - North West","Matching","BMA",true],"80101196":["True Shop Central Plaza Udonthani","UPC - Upper Northeast","Matching","UPC I",true],"80101210":["สาขา WW บิ๊กซี ตาก","นอก Master","ไม่ระบุ","นอก Master",false],"80101340":["True Shop Future Park Rangsit","BMA III - North East","Matching","BMA",true]},"items":[["16/10/2023",1101,3,"80101210","GT01210WWL231000001","0300130859","3000084787","MEMBER CARD,TRUE DIGITAL,BLUE AQUA,CSP",1,"9852000100211036","P2-สินค้าไม่ครบตามจำนวนในOrder","ไม่มีสินค้าส่งมา","61227123","16/10/2023","16/10/2023","ยังติดปัญหา","K.Awachirapan แจ้งยกเลิกSystem Only"],["16/10/2023",1101,3,"80101210","GT01210WWL231000001","0300130859","3000084787","MEMBER CARD,TRUE DIGITAL,BLUE AQUA,CSP",1,"9852000100211037","P2-สินค้าไม่ครบตามจำนวนในOrder","ไม่มีสินค้าส่งมา","61227123","16/10/2023","16/10/2023","ยังติดปัญหา","K.Awachirapan แจ้งยกเลิกSystem Only"],["21/07/2026",91,3,"80101182","GT01182WWL260700008","0300200638","3000094962","DM,T,IOT,INDOOR CAMERA FHD,LIVINGTECH",1,"TDGSC1012110001549","A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW262005","20/07/2026","22/07/2026","ยังติดปัญหา",null],["21/07/2026",90,3,"80100623","GT00623WWL260700007","0300200803","9000013213","ACC,H/S,CASE,GIZMO,FS MATTE MS,IP17AIR",3,null,"P7- ไม่มีสินค้าส่งมา","ไม่มีสินค้าส่งมา","TDSWAW267803","20/07/2026","23/07/2026","ยังติดปัญหา",null],["23/07/2026",90,3,"80101340","GT01340WWL260700009","0300200678","3000114530","ACC,H/S,CASE,SS,S25UT,STANDINGGRIP,WHITE",1,null,"P7- ไม่มีสินค้าส่งมา","ไม่มีสินค้าส่งมา","TDSWAW253958","23/07/2026","23/07/2026","ยังติดปัญหา",null],["10/09/2026",41,3,"80100626","RA00626WWL260900001","0300202385","9000013518","ACC,H/S,FOCUS,FILM,TG FF SL,SS S26UT,BK",1,null,"P7- ไม่มีสินค้าส่งมา","ไม่มีสินค้าส่งมา","TDSWAW271019","09/09/2026","10/09/2026","ยังติดปัญหา",null],["16/09/2026",34,3,"80101196","GT01196WWL260900002","0300202532","3000114604","ACC,H/S,CASE,SS,S25UT,KINDSUIT,LB,DEMO",1,null,"P7- ไม่มีสินค้าส่งมา","ไม่มีสินค้าส่งมา","TDSWAW267154","17/09/2026","17/09/2026","ยังติดปัญหา",null],["05/10/2026",15,1,"80100725","GT00725WWL260900005","0300203654","3000115749","ACC,REDMI BUDS 6,GREEN_DEMO",1,null,"A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW268042","05/10/2026","06/10/2026","ยังติดปัญหา",null],["05/10/2026",15,1,"80100725","GT00725WWL260900006","0300203739","3000144288","H/S,XIAOMI,REDMI 17,5G,4/256GB,BLUE",1,"864333085851160","A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW268042","05/10/2026","06/10/2026","ยังติดปัญหา",null],["05/10/2026",15,1,"80100725","GT00725WWL260900006","0300203739","3000144287","H/S,XIAOMI,REDMI 17,5G,4/256GB,BLACK",1,"864333084918226","A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW268042","05/10/2026","06/10/2026","ยังติดปัญหา",null],["05/10/2026",15,1,"80100725","GT00725WWL260900006","0300203739","3000144290","H/S,XIAOMI,REDMI 17,5G,4/128GB,BLACK",1,"864333084999804","A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW268042","05/10/2026","06/10/2026","ยังติดปัญหา",null],["05/10/2026",15,1,"80100725","GT00725WWL260900006","0300203739","3000144291","H/S,XIAOMI,REDMI 17,5G,4/128GB,BLUE",1,"864333086466885","A2-AWB ไม่มีสินค้าส่งมาทั้งOrder","ไม่มีสินค้าส่งมาทั้งOrder","TDSWAW268042","05/10/2026","06/10/2026","ยังติดปัญหา",null],["12/10/2026",5,0,"80100481","RA00481WWL261000003","0300204703","9000014243","ACC,H/S,FOCUS,FILM,LENS MATTE,IP18PM",1,null,"P2-สินค้าไม่ครบตามจำนวนในOrder","ไม่มีสินค้าส่งมา 1 ชิ้น","TDSWAW259820","15/10/2026","16/10/2026","ยังติดปัญหา",null]],"outside":{"shops":1,"rows":2}}</script>
+<script>
+const D=JSON.parse(document.getElementById('embedded-data').textContent);
+const SLA=['0-10 Days','11-20 Days','21-30 Days','Over 30 Days'];
+const SLAC=['var(--ok)','var(--stk)','var(--part)','var(--bad)'];
+const SLASOFT=['var(--ok-soft)','var(--stk-soft)','var(--part-soft)','var(--bad-soft)'];
+// item: [dateIn, slaDays, slaIdx, shopCode, doc, po, material, desc, qty, serial, problem, detail, awb, opened, reported, status, comment]
+const I=D.items.map(r=>({date:r[0],days:r[1],sla:r[2],shop:r[3],doc:r[4],po:r[5],mat:r[6],desc:r[7],qty:r[8]||0,serial:r[9],err:r[10],detail:r[11],awb:r[12],opened:r[13],reported:r[14],status:r[15],comment:r[16]}));
+const S=D.shops; // code -> [name, area, type, region, inMaster]
+const esc=s=>s==null?'':String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=n=>(n||0).toLocaleString('en-US');
+const shopName=c=>S[c]?S[c][0]:c, reg=c=>S[c]?S[c][3]:'-', area=c=>S[c]?S[c][1]:'-', typ=c=>S[c]?S[c][2]:'-';
+const errShort=e=>e?String(e).split(/[-–]/)[0].trim():'-';
+const KEYS=['sla','reg','area','type','shop','err'];
+const F={sel:Object.fromEntries(KEYS.map(k=>[k,new Set()])),q:''};
+const val=(x,k)=>k==='sla'?SLA[x.sla]:k==='reg'?reg(x.shop):k==='area'?area(x.shop):k==='type'?typ(x.shop):k==='shop'?x.shop:(x.err||'-');
+const LABEL={shop:v=>`${esc(shopName(v))} <small>${esc(v)}</small>`};
+const ORDER={sla:(a,b)=>SLA.indexOf(a)-SLA.indexOf(b),shop:(a,b)=>shopName(a).localeCompare(shopName(b),'th'),reg:(a,b)=>(a==='นอก Master')-(b==='นอก Master')||a.localeCompare(b,'th'),area:(a,b)=>(a==='นอก Master')-(b==='นอก Master')||a.localeCompare(b,'th')};
+const lab=(k,v)=>LABEL[k]?LABEL[k](v):esc(v);
+function passes(x,skip){for(const k of KEYS){if(k===skip)continue;const s=F.sel[k];if(s.size&&!s.has(val(x,k)))return false}
+  return !F.q||[x.serial,x.awb,x.doc,x.po,x.mat,x.desc,x.comment,shopName(x.shop),x.shop].some(v=>v&&String(v).toLowerCase().includes(F.q));}
+const rows=skip=>I.filter(x=>passes(x,skip));
+const MS={};
+document.querySelectorAll('.ms').forEach(el=>{const k=el.dataset.k,l=el.dataset.l;
+  el.innerHTML=`<button type="button"></button><div class="pop"><input type="search" placeholder="ค้นหา ${l}"><div class="acts"><a data-a="all">เลือกทั้งหมด</a><a data-a="none">ล้าง</a></div><div class="list"></div></div>`;
+  const btn=el.querySelector('button'),inp=el.querySelector('input'),list=el.querySelector('.list');
+  const filterList=()=>{const q=inp.value.trim().toLowerCase();list.querySelectorAll('label.opt').forEach(o=>o.style.display=!q||o.textContent.toLowerCase().includes(q)?'':'none')};
+  btn.onclick=e=>{e.stopPropagation();const o=el.classList.contains('open');document.querySelectorAll('.ms.open').forEach(x=>x.classList.remove('open'));if(!o){el.classList.add('open');inp.value='';filterList();inp.focus()}};
+  el.querySelector('.pop').onclick=e=>e.stopPropagation();
+  inp.oninput=filterList;
+  list.onchange=e=>{const v=e.target.value;if(e.target.checked)F.sel[k].add(v);else F.sel[k].delete(v);shown=200;render()};
+  el.querySelector('.acts').onclick=e=>{const a=e.target.dataset.a;if(!a)return;if(a==='none')F.sel[k].clear();else list.querySelectorAll('label.opt').forEach(o=>{if(o.style.display!=='none')F.sel[k].add(o.querySelector('input').value)});shown=200;render()};
+  MS[k]={el,btn,list,l,filterList};
+});
+document.addEventListener('click',()=>document.querySelectorAll('.ms.open').forEach(x=>x.classList.remove('open')));
+function refreshFilters(){
+  for(const k of KEYS){const m=MS[k];const avail=[...new Set(I.filter(x=>passes(x,k)).map(x=>val(x,k)))];
+    for(const v of [...F.sel[k]]) if(!avail.includes(v)) F.sel[k].delete(v);
+    avail.sort(ORDER[k]||((a,b)=>String(a).localeCompare(String(b),'th')));
+    m.list.innerHTML=avail.map(v=>`<label class="opt"><input type="checkbox" value="${esc(v)}" ${F.sel[k].has(v)?'checked':''}><span>${lab(k,v)}</span></label>`).join('')||'<div class="muted small" style="padding:8px">ไม่มีตัวเลือก</div>';
+    const n=F.sel[k].size; m.el.classList.toggle('on',n>0);
+    const txt=n===0?`ทุก ${m.l} (${avail.length})`:n===1?String(lab(k,[...F.sel[k]][0])).replace(/<[^>]+>/g,''):`เลือก ${n} จาก ${avail.length}`;
+    m.btn.innerHTML=`<small>${esc(m.l)}</small>${esc(txt)}`; m.btn.title=txt;
+    if(m.el.classList.contains('open'))m.filterList();}
+}
+// click on a chart/table: select only that value (click again to clear)
+function setF(k,v){const s=F.sel[k];const only=s.size===1&&s.has(v);s.clear();if(!only)s.add(v);shown=200;render();}
+document.getElementById('q').oninput=e=>{F.q=e.target.value.trim().toLowerCase();shown=200;render()};
+document.getElementById('reset').onclick=()=>{KEYS.forEach(k=>F.sel[k].clear());F.q='';document.getElementById('q').value='';shown=200;render()};
+
+let shown=200;
+function render(){
+  refreshFilters();
+  const R=rows(); const qty=R.reduce((a,x)=>a+x.qty,0);
+  const bySla=[0,0,0,0]; R.forEach(x=>bySla[x.sla]+=x.qty);
+  const shops=new Set(R.map(x=>x.shop)), awb=new Set(R.map(x=>x.awb).filter(Boolean));
+  const oldest=R.reduce((a,x)=>Math.max(a,x.days||0),0);
+  document.getElementById('kpis').innerHTML=[
+    ['','จำนวนชิ้นที่ติดปัญหา',fmt(qty),fmt(R.length)+' รายการ'],
+    ['','สาขา',fmt(shops.size),fmt(awb.size)+' AWB'],
+    ['ok','0-10 วัน',fmt(bySla[0]),pct(bySla[0],qty)],
+    ['','11-20 วัน',fmt(bySla[1]),pct(bySla[1],qty)],
+    ['part','21-30 วัน',fmt(bySla[2]),pct(bySla[2],qty)],
+    ['bad','เกิน 30 วัน',fmt(bySla[3]),pct(bySla[3],qty)+' · เก่าสุด '+fmt(oldest)+' วัน'],
+  ].map(k=>`<div class="card kpi ${k[0]}"><div class="lab">${k[1]}</div><div class="val">${k[2]}</div><div class="sub">${k[3]}</div></div>`).join('');
+
+  // SLA x Region (ignores the SLA/Region filters so the table stays a full picture)
+  const R2=I.filter(x=>passes(x,'reg')&&(!F.sel.sla.size||F.sel.sla.has(SLA[x.sla]))), M={};
+  R2.forEach(x=>{const g=reg(x.shop);(M[g]=M[g]||[0,0,0,0])[x.sla]+=x.qty;});
+  const regs=Object.keys(M).sort((a,b)=>sum(M[b])-sum(M[a])); const tot=[0,0,0,0]; regs.forEach(g=>M[g].forEach((v,i)=>tot[i]+=v));
+  document.getElementById('slaTbl').innerHTML=`<thead><tr><th>Region</th>${SLA.map((s,i)=>`<th class="num">${s}</th>`).join('')}<th class="num">รวม</th><th>สัดส่วน</th></tr></thead><tbody>`+
+    regs.map(g=>`<tr${F.sel.reg.has(g)?' style="background:var(--accent-soft)"':''}><td><a href="#" data-reg="${esc(g)}" class="shop">${esc(g)}</a></td>${M[g].map((v,i)=>`<td class="num"><a href="#" data-reg="${esc(g)}" data-sla="${i}">${v?fmt(v):'<span class=muted>-</span>'}</a></td>`).join('')}<td class="num"><b>${fmt(sum(M[g]))}</b></td><td>${mini(M[g])}</td></tr>`).join('')+
+    `<tr><td><b>รวม</b></td>${tot.map(v=>`<td class="num"><b>${fmt(v)}</b></td>`).join('')}<td class="num"><b>${fmt(sum(tot))}</b></td><td>${mini(tot)}</td></tr></tbody>`;
+  document.querySelectorAll('#slaTbl a').forEach(a=>a.onclick=e=>{e.preventDefault();const g=a.dataset.reg,s=a.dataset.sla;
+    if(s!=null){const same=F.sel.reg.size===1&&F.sel.reg.has(g)&&F.sel.sla.size===1&&F.sel.sla.has(SLA[s]);F.sel.reg.clear();F.sel.sla.clear();if(!same){F.sel.reg.add(g);F.sel.sla.add(SLA[s]);}shown=200;render();} else setF('reg',g);});
+
+  // shops
+  const SH={}; R.forEach(x=>{const o=SH[x.shop]=SH[x.shop]||{q:[0,0,0,0],n:0,old:0,awb:new Set()};o.q[x.sla]+=x.qty;o.n++;o.old=Math.max(o.old,x.days||0);if(x.awb)o.awb.add(x.awb);});
+  const shl=Object.entries(SH).sort((a,b)=>sum(b[1].q)-sum(a[1].q));
+  document.getElementById('shopTbl').innerHTML=`<thead><tr><th>สาขา</th><th>Region</th><th class="num">ชิ้น</th><th class="num">AWB</th><th class="num">เก่าสุด (วัน)</th><th>SLA</th></tr></thead><tbody>`+
+    (shl.length?shl.map(([c,o])=>`<tr><td><a href="#" class="shop" data-shop="${esc(c)}">${esc(shopName(c))}</a><div class="code">${esc(c)}${S[c]&&!S[c][4]?' · นอก Master':''}</div></td><td class="small">${esc(reg(c))}<div class="code">${esc(area(c))}</div></td><td class="num"><b>${fmt(sum(o.q))}</b></td><td class="num">${o.awb.size}</td><td class="num">${o.old>30?`<span class="tag t-bad">${fmt(o.old)}</span>`:fmt(o.old)}</td><td>${mini(o.q)}</td></tr>`).join(''):`<tr><td colspan=6 class="empty">ไม่มีข้อมูล</td></tr>`)+'</tbody>';
+  document.querySelectorAll('#shopTbl a').forEach(a=>a.onclick=e=>{e.preventDefault();setF('shop',a.dataset.shop)});
+
+  // error codes
+  const E={}; R.forEach(x=>{const k=x.err||'-';E[k]=(E[k]||0)+x.qty;}); const el=Object.entries(E).sort((a,b)=>b[1]-a[1]); const mx=el.length?el[0][1]:1;
+  document.getElementById('errBox').innerHTML=el.map(([k,v])=>`<div class="errrow${F.sel.err.has(k)?' sel':''}" data-err="${esc(k)}"><div class="et"><b>${esc(errShort(k))}</b> ${esc(String(k).replace(/^[A-Z]\d+\s*[-–]\s*/,''))}</div><div class="eb"><i style="width:${v/mx*100}%"></i></div><div class="ev">${fmt(v)}</div></div>`).join('')||'<div class="empty">ไม่มีข้อมูล</div>';
+  document.querySelectorAll('.errrow').forEach(d=>d.onclick=()=>setF('err',d.dataset.err));
+
+  // detail
+  const DR=[...R].sort((a,b)=>(b.days||0)-(a.days||0));
+  document.getElementById('detCount').textContent=fmt(DR.length)+' รายการ · เรียงจากค้างนานสุด';
+  document.getElementById('detTbl').innerHTML=`<thead><tr><th>วันที่งานเข้า</th><th class="num">ค้าง (วัน)</th><th>สาขา</th><th>AWB</th><th>เลขที่เอกสาร / PO</th><th>สินค้า</th><th class="num">ชิ้น</th><th>IMEI / Serial</th><th>ปัญหา</th><th>วันที่แกะ / แจ้งปัญหา</th><th>สถานะ / Comment</th></tr></thead><tbody>`+
+    DR.slice(0,shown).map(x=>`<tr><td class="small" style="white-space:nowrap">${esc(x.date)}</td><td class="num"><span class="tag" style="background:${SLASOFT[x.sla]};color:${SLAC[x.sla]}">${fmt(x.days)}</span></td>
+    <td><span class="shop">${esc(shopName(x.shop))}</span><div class="code">${esc(x.shop)} · ${esc(reg(x.shop))}</div></td>
+    <td class="small" style="white-space:nowrap"><b>${esc(x.awb)}</b></td>
+    <td class="small">${esc(x.doc)}<div class="code">PO ${esc(x.po)}</div></td>
+    <td class="small" style="min-width:200px">${esc(x.desc)}<div class="code">${esc(x.mat)}</div></td><td class="num">${fmt(x.qty)}</td>
+    <td class="small code" style="white-space:nowrap">${esc(x.serial)||'-'}</td>
+    <td class="small" style="min-width:220px"><span class="tag t-bad">${esc(errShort(x.err))}</span> ${esc(String(x.err||'').replace(/^[A-Z]\d+\s*[-–]\s*/,''))}<div class="code">${esc(x.detail)}</div></td>
+    <td class="small" style="white-space:nowrap">${esc(x.opened)||'-'}<div class="code">แจ้ง ${esc(x.reported)||'-'}</div></td>
+    <td class="small" style="min-width:160px">${esc(x.status)||'-'}${x.comment?`<div class="code">${esc(x.comment)}</div>`:''}</td></tr>`).join('')+'</tbody>';
+  const mb=document.getElementById('more'); mb.style.display=DR.length>shown?'block':'none'; mb.textContent='แสดงเพิ่ม ('+fmt(DR.length-shown)+' รายการ)';
+}
+const sum=a=>a.reduce((x,y)=>x+y,0), pct=(a,b)=>b?Math.round(a/b*100)+'%':'0%';
+function mini(q){const t=sum(q)||1;return `<div class="mini">${q.map((v,i)=>v?`<i style="width:${v/t*100}%;background:${SLAC[i]}" title="${SLA[i]}: ${v}"></i>`:'').join('')}</div>`}
+document.getElementById('more').onclick=()=>{shown+=300;render()};
+document.getElementById('export').onclick=()=>{
+  const H=['วันที่งานเข้า','SLA Days','SLA','Shop Code','Shop Name','Region','Area','TYPE SHOP','AWB No.','เลขที่เอกสาร','PO','ปัญหา','Material','Description','จำนวนที่ติดปัญหา','IMEI/Serial','รายละเอียดปัญหาเพิ่มเติม','วันที่แกะ','วันที่แจ้งปัญหา','สถานะ','Comment'];
+  const q=v=>{v=v==null?'':String(v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+  const L=[H.join(',')].concat(rows().map(x=>[x.date,x.days,SLA[x.sla],x.shop,shopName(x.shop),reg(x.shop),area(x.shop),typ(x.shop),x.awb,x.doc,x.po,x.err,x.mat,x.desc,x.qty,x.serial,x.detail,x.opened,x.reported,x.status,x.comment].map(q).join(',')));
+  const b=new Blob(['﻿'+L.join('\n')],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='AWBPending_'+D.fileDate.replace(/\//g,'')+'.csv'; a.click();};
+document.getElementById('meta').innerHTML=`<span>ข้อมูลไฟล์ <b>${esc(D.fileDate)}</b></span><span>อัปเดตหน้าเว็บ <b>${esc(D.built)}</b></span>`;
+document.getElementById('note').innerHTML=`ที่มา: ไฟล์แนบ "สรุปปัญหาหน้า AWB Pending" ในอีเมล "Non Conform &amp; สรุปปัญหาหน้า AWB pending" จาก Warehouse Return (wh101.return@ascendcorp.com) · ไฟล์ ${esc(D.file)} · SLA ใช้ตามคอลัมน์ SLA / SLA Day ในไฟล์ · ชื่อสาขา / Region / Area / TYPE SHOP ตาม Recall Master · สาขาที่ไม่อยู่ใน Master (${fmt(D.outside.shops)} สาขา, ${fmt(D.outside.rows)} รายการ) อยู่ในกลุ่ม "นอก Master" และใช้ชื่อตามไฟล์ AWB Pending · ไม่แสดงรหัสพนักงานผู้บันทึกและอีเมลสาขา`;
+// theme
+const root=document.documentElement;try{const t=localStorage.getItem('recall-theme');if(t)root.dataset.theme=t}catch(e){}
+document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;root.dataset.theme=dark?'light':'dark';try{localStorage.setItem('recall-theme',root.dataset.theme)}catch(e){}};
+render();
+</script>
+</body>
+</html>
